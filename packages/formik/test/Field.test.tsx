@@ -359,9 +359,11 @@ describe('Field / FastField', () => {
     );
 
     cases(
-      'runs validation when validateField is called (SYNC)',
+      'runs validation when validateField is called and passes values (SYNC)',
       async renderField => {
-        const validate = jest.fn(() => 'Error!');
+        const validate = jest.fn(
+          (_value: any, values: any) => `Wrong name for email: ${values.email}`
+        );
         const { getFormProps, rerender } = renderField({
           validate,
           component: 'input',
@@ -375,15 +377,19 @@ describe('Field / FastField', () => {
         rerender();
         await waitFor(() => {
           expect(validate).toHaveBeenCalled();
-          expect(getFormProps().errors.name).toBe('Error!');
+          expect(getFormProps().errors.name).toBe(
+            'Wrong name for email: hello@reason.nyc'
+          );
         });
       }
     );
 
     cases(
-      'runs validation when validateField is called (ASYNC)',
+      'runs validation when validateField is called and passes values (ASYNC)',
       async renderField => {
-        const validate = jest.fn(() => Promise.resolve('Error!'));
+        const validate = jest.fn((_value: any, values: any) =>
+          Promise.resolve(`Wrong name for email: ${values.email}`)
+        );
 
         const { getFormProps, rerender } = renderField({ validate });
 
@@ -395,7 +401,11 @@ describe('Field / FastField', () => {
         });
 
         expect(validate).toHaveBeenCalled();
-        await waitFor(() => expect(getFormProps().errors.name).toBe('Error!'));
+        await waitFor(() =>
+          expect(getFormProps().errors.name).toBe(
+            'Wrong name for email: hello@reason.nyc'
+          )
+        );
       }
     );
 

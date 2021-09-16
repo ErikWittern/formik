@@ -319,5 +319,6 @@ export interface FieldInputProps<Value> {
 }
 
 export type FieldValidator = (
-  value: any
+  value: any,
+  values?: any
 ) => string | void | Promise<string | void>;
